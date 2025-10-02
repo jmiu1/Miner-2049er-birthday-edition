@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Miner 49er — Birthday Level</title>
+  <style>
+    html, body { height: 100%; margin: 0; background:#0e0e12; color:#e9e9ef; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; }
+    #wrap { display:flex; align-items:center; justify-content:center; height:100%; }
+    #ui { position:fixed; top:12px; left:12px; font-size:14px; background:rgba(0,0,0,0.3); padding:8px 10px; border-radius:8px; }
+    #legend { position:fixed; bottom:12px; left:12px; font-size:12px; background:rgba(0,0,0,0.3); padding:6px 8px; border-radius:8px; line-height:1.4; }
+    canvas { image-rendering: pixelated; image-rendering: crisp-edges; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.45); background:#10141a; }
+    a { color:#9bd3ff; }
+    .pill { padding:2px 8px; border-radius:999px; background:#1b2230; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <canvas id="game" width="960" height="540"></canvas>
+  </div>
+  <div id="ui">
+    <div><strong>Miner 49er — Level 1</strong></div>
+    <div>Lives: <span id="lives">3</span> · Painted: <span id="painted">0</span>/<span id="paintTotal">0</span> · Time: <span id="timer">0.0</span>s</div>
+    <div class="pill">Controls: ←/→ move, Space jump, ↑/↓ climb, R restart, M mute, P pause</div>
+  </div>
+  <div id="legend">
+    Goal: Walk over all gold tiles to paint them green while avoiding enemies. Climb ladders to reach platforms.
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
