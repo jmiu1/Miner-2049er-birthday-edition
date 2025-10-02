@@ -27,7 +27,10 @@ async function boot() {
   const start = level.entities.find(e => e.type === 'playerStart') || {x: 2 * CONFIG.TILE, y: 2 * CONFIG.TILE};
   player = new Player(start.x, start.y);
   enemies = level.entities.filter(e => e.type === 'enemy').map(e => new Enemy(e.x, e.y, e.patrolMinX, e.patrolMaxX));
-  camera = new Camera(0, 0, canvas.width, canvas.height, level.width * CONFIG.TILE, level.height * CONFIG.TILE);
+  const viewWidth = canvas.width / CONFIG.WORLD_SCALE;
+  const viewHeight = canvas.height / CONFIG.WORLD_SCALE;
+  camera = new Camera(0, 0, viewWidth, viewHeight, level.width * CONFIG.TILE, level.height * CONFIG.TILE);
+  camera.follow(player.x, player.y);
 
   const stats = getPaintStats(level);
   ui.paintTotal.textContent = stats.total;

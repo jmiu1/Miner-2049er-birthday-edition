@@ -3,10 +3,11 @@ import { getLayer, getPaintMask } from './tiles.js';
 
 export function render(ctx, cam, level, player, enemies, rules) {
   const scale = CONFIG.WORLD_SCALE;
-  ctx.setTransform(scale, 0, 0, scale, -cam.x*scale, -cam.y*scale);
+  ctx.imageSmoothingEnabled = false;
+  ctx.setTransform(scale, 0, 0, scale, -cam.x * scale, -cam.y * scale);
   // clear
   ctx.fillStyle = '#0b0f14';
-  ctx.fillRect(cam.x, cam.y, cam.vw/scale, cam.vh/scale);
+  ctx.fillRect(cam.x, cam.y, cam.vw, cam.vh);
 
   drawTiles(ctx, level);
   drawPaint(ctx, level);
