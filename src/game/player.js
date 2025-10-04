@@ -15,6 +15,7 @@ export class Player {
     this.lives = CONFIG.LIVES;
     this.dead = false;
     this.invuln = 0;
+    this.powerTimer = 0;
   }
   rect() { return {x:this.x - this.width/2, y:this.y - this.height, w:this.width, h:this.height}; }
   overlaps(other) {
@@ -28,11 +29,13 @@ export class Player {
     this.lives--;
     this.invuln = 1.2;
     this.x = this.spawnX; this.y = this.spawnY; this.vx = 0; this.vy = 0;
+    this.powerTimer = 0;
     if (this.lives <= 0) this.dead = true;
   }
   update(dt, input, level) {
     if (this.dead) return;
     if (this.invuln > 0) this.invuln -= dt;
+    if (this.powerTimer > 0) this.powerTimer = Math.max(0, this.powerTimer - dt);
 
     const left = input.down('Left') || input.down('a');
     const right = input.down('Right') || input.down('d');
@@ -66,11 +69,26 @@ export class Player {
     this._moveX(dt);
     this._moveY(dt);
   }
+  grantPower(duration) {
+    this.powerTimer = Math.max(this.powerTimer, duration);
+  }
+  isPowered() {
+    return this.powerTimer > 0;
+  }
   _moveX(dt) {
+    if (this.vx === 0) return;
     const nx = this.x + this.vx * dt;
-    // sample feet, mid, head to prevent snagging
-    if (!this._hitsSolid(nx, this.y - 1) && !this._hitsSolid(nx, this.y - this.height/2) && !this._hitsSolid(nx, this.y - this.height + 1)) {
+    if (!this._hitsSolid(nx, this.y)) {
       this.x = nx;
+    } else {
+      const dir = Math.sign(this.vx);
+      const tileX = Math.floor((nx + dir * this.width / 2) / CONFIG.TILE);
+      const epsilon = 0.01;
+      if (dir > 0) {
+        this.x = tileX * CONFIG.TILE - this.width / 2 - epsilon;
+      } else if (dir < 0) {
+        this.x = (tileX + 1) * CONFIG.TILE + this.width / 2 + epsilon;
+      }
     }
   }
   _moveY(dt) {
@@ -95,11 +113,14 @@ export class Player {
   _hitsSolid(px, py) {
     // test four corners of player rect
     const r = this.rect();
+    const halfW = this.width / 2 - 1;
     const points = [
-      {x: px - this.width/2, y: py},                       // left foot
-      {x: px + this.width/2, y: py},                       // right foot
-      {x: px - this.width/2, y: py - this.height},         // left head
-      {x: px + this.width/2, y: py - this.height},         // right head
+      {x: px - halfW, y: py - 1},
+      {x: px + halfW, y: py - 1},
+      {x: px - halfW, y: py - this.height / 2},
+      {x: px + halfW, y: py - this.height / 2},
+      {x: px - halfW, y: py - this.height + 1},
+      {x: px + halfW, y: py - this.height + 1},
     ];
     for (const p of points) {
       if (isSolidAt(p.x, p.y)) return true;
