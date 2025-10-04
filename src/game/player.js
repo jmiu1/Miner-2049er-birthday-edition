@@ -15,6 +15,7 @@ export class Player {
     this.lives = CONFIG.LIVES;
     this.dead = false;
     this.invuln = 0;
+    this.powerTimer = 0;
   }
   rect() { return {x:this.x - this.width/2, y:this.y - this.height, w:this.width, h:this.height}; }
   overlaps(other) {
@@ -28,11 +29,13 @@ export class Player {
     this.lives--;
     this.invuln = 1.2;
     this.x = this.spawnX; this.y = this.spawnY; this.vx = 0; this.vy = 0;
+    this.powerTimer = 0;
     if (this.lives <= 0) this.dead = true;
   }
   update(dt, input, level) {
     if (this.dead) return;
     if (this.invuln > 0) this.invuln -= dt;
+    if (this.powerTimer > 0) this.powerTimer = Math.max(0, this.powerTimer - dt);
 
     const left = input.down('Left') || input.down('a');
     const right = input.down('Right') || input.down('d');
@@ -65,6 +68,12 @@ export class Player {
     // Integrate and collide (swept axis-aligned)
     this._moveX(dt);
     this._moveY(dt);
+  }
+  grantPower(duration) {
+    this.powerTimer = Math.max(this.powerTimer, duration);
+  }
+  isPowered() {
+    return this.powerTimer > 0;
   }
   _moveX(dt) {
     const nx = this.x + this.vx * dt;

@@ -39,7 +39,11 @@ export function paintUnderfoot(px, py) {
   if (x < 0 || y < 0 || x >= current.width || y >= current.height) return;
   const idx = y*current.width + x;
   const paint = getLayer('paint').data;
-  if (paint[idx] === 1) paintedMask[idx] = 1;
+  if (paint[idx] === 1 && paintedMask[idx] === 0) {
+    paintedMask[idx] = 1;
+    return true;
+  }
+  return false;
 }
 
 export function getPaintStats() {
